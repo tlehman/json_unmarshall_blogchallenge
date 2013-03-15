@@ -20,6 +20,7 @@ func solutionA(jsonString []byte) ([]Person, []Place) {
   persons := []Person{}
   places := []Place{}
 
+  // data is a map from strings to (an array of maps from strings to interface)
   var data map[string][]map[string]interface{}
   err := json.Unmarshal(jsonString, &data)
 
@@ -71,5 +72,4 @@ func main() {
   fmt.Println("\n")
   fmt.Println(places)
 }
-
 
