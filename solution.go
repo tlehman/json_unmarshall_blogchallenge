@@ -1,7 +1,8 @@
-package jsonStuff
+package main
 
 import (
   "fmt"
+  "io/ioutil"
   "encoding/json"
 )
 
@@ -58,6 +59,17 @@ func addPlace (places []Place, item map[string]interface{}) ([]Place){
 }
 
 func main() {
+  data, err := ioutil.ReadFile("people_places.json")
+
+  if err != nil {
+    fmt.Println(err)
+  }
+
+  persons, places := solutionA(data)
+
+  fmt.Println(persons)
+  fmt.Println("\n")
+  fmt.Println(places)
 }
 
 

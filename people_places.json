@@ -5,12 +5,28 @@
             "age": 37
         },
         {
+            "name":"Tobi",
+            "age": 24
+        },
+        {
             "city": "Ipoh",
             "country": "Malaysia"
         },
         {
+            "city": "Helsinki",
+            "country": "Finland"
+        },
+        {
+            "name": "Linus",
+            "age":42
+        },
+        {
             "name": "Bob",
             "age": 36
+        },
+        {
+            "name": "Aster",
+            "age": 5
         },
         {
             "city": "Northampton",
@@ -18,3 +34,4 @@
         }
     ]
 }
+
