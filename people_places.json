@@ -1,0 +1,20 @@
+{
+    "things": [
+        {
+            "name": "Alice",
+            "age": 37
+        },
+        {
+            "city": "Ipoh",
+            "country": "Malaysia"
+        },
+        {
+            "name": "Bob",
+            "age": 36
+        },
+        {
+            "city": "Northampton",
+            "country": "England"
+        }
+    ]
+}
