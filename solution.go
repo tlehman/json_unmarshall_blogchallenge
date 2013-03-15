@@ -16,6 +16,13 @@ type Place struct {
   Country string
 }
 
+type Mixed struct {
+  Name    string
+  Age     int
+  City    string
+  Country string
+}
+
 func solutionA(jsonString []byte) ([]Person, []Place) {
   persons := []Person{}
   places := []Place{}
@@ -44,13 +51,35 @@ func solutionA(jsonString []byte) ([]Person, []Place) {
 }
 
 func solutionB(jsonString []byte) ([]Person, []Place) {
-  persons, places := []Person{}, []Place{}
+  persons := []Person{}
+  places := []Place{}
+
+  var data map[string][]Mixed
+
+  err := json.Unmarshal(jsonString, &data)
+  if err != nil {
+    fmt.Println(err)
+    return persons, places
+  }
+
+  for i := range data["things"] {
+    item := data["things"][i]
+    if item.Name != "" {
+      persons = append(persons, Person{item.Name, item.Age})
+    } else {
+      places = append(places, Place{item.City, item.Country})
+    }
+  }
+
   return persons, places
 }
 
 func addPerson(persons []Person, item map[string]interface{}) ([]Person) {
   name, _ := item["name"].(string)
-  age, _ := item["age"].(int)
+  age, ok := item["age"].(int)
+  if !ok {
+    fmt.Println("item[\"age\"] = ", item["age"].(int))
+  }
   person := Person{name,age}
   persons = append(persons, person)
   return persons
@@ -71,10 +100,11 @@ func main() {
     fmt.Println(err)
   }
 
-  persons, places := solutionA(data)
+  personsA, placesA := solutionA(data)
+  personsB, placesB := solutionB(data)
 
-  fmt.Println(persons)
+  fmt.Println(personsA, personsB)
   fmt.Println("\n")
-  fmt.Println(places)
+  fmt.Println(placesA, placesB)
 }
 
