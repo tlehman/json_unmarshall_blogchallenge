@@ -43,6 +43,11 @@ func solutionA(jsonString []byte) ([]Person, []Place) {
   return persons, places
 }
 
+func solutionB(jsonString []byte) ([]Person, []Place) {
+  persons, places := []Person{}, []Place{}
+  return persons, places
+}
+
 func addPerson(persons []Person, item map[string]interface{}) ([]Person) {
   name, _ := item["name"].(string)
   age, _ := item["age"].(int)
