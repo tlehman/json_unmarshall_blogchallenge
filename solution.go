@@ -161,11 +161,14 @@ func solutionD(jsonStr []byte) ([]Person, []Place) {
 		if name != nil {
 			age, _ := jsonpointer.Find(jsonStr, pathAge)
 			agef, _ := strconv.ParseFloat(strings.TrimSpace(string(age)), 64)
-			persons = append(persons, Person{string(trimJsonBytes(name)), agef})
+			nameTrimmed := string(trimJsonBytes(name))
+			persons = append(persons, Person{nameTrimmed, agef})
 
 		} else if city != nil {
 			country, _ := jsonpointer.Find(jsonStr, pathCountry)
-			places = append(places, Place{string(trimJsonBytes(city)), string(trimJsonBytes(country))})
+			cityTrimmed := string(trimJsonBytes(city))
+			countryTrimmed := string(trimJsonBytes(country))
+			places = append(places, Place{cityTrimmed, countryTrimmed})
 
 		} else {
 			break
@@ -192,7 +195,6 @@ func trimJsonBytes(toTrim []byte) []byte {
 			rightEdge = true
 		}
 	}
-	fmt.Println(start, end)
 	return toTrim[start:end]
 }
 
