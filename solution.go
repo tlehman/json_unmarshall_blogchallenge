@@ -8,7 +8,7 @@ import (
 
 type Person struct {
   Name string
-  Age  int
+  Age  float64
 }
 
 type Place struct {
@@ -18,7 +18,7 @@ type Place struct {
 
 type Mixed struct {
   Name    string
-  Age     int
+  Age     float64
   City    string
   Country string
 }
@@ -76,9 +76,9 @@ func solutionB(jsonString []byte) ([]Person, []Place) {
 
 func addPerson(persons []Person, item map[string]interface{}) ([]Person) {
   name, _ := item["name"].(string)
-  age, ok := item["age"].(int)
+  age, ok := item["age"].(float64)
   if !ok {
-    fmt.Println("item[\"age\"] = ", item["age"].(int))
+    fmt.Println("age = ", age)
   }
   person := Person{name,age}
   persons = append(persons, person)
@@ -93,6 +93,52 @@ func addPlace (places []Place, item map[string]interface{}) ([]Place){
   return places
 }
 
+func solutionC(jsonStr []byte) ([]Person, []Place) {
+  persons := []Person{}
+  places := []Place{}
+
+  var data map[string][]json.RawMessage
+
+  err := json.Unmarshal(jsonStr, &data)
+
+  if err != nil {
+    fmt.Println(err)
+    return persons, places
+  }
+  for _, thing := range data["things"] {
+    persons = addPersonC(thing, persons)
+    places = addPlaceC(thing, places)
+  }
+  return persons, places
+}
+
+func addPersonC(thing json.RawMessage, persons []Person) ([]Person) {
+  person := Person{}
+  err := json.Unmarshal(thing, &person)
+  if err != nil {
+    fmt.Println(err)
+  } else {
+    if person != *new(Person) {            // new(Person) allocates and zeros a Person, and returns a pointer
+      persons = append(persons, person)
+    }
+  }
+  return persons
+}
+
+func addPlaceC(thing json.RawMessage, places []Place) ([]Place) {
+  place := Place{}
+  err := json.Unmarshal(thing, &place)
+  if err != nil {
+    fmt.Println(err)
+  } else {
+    if place != *new(Place) {            // new(Person) allocates and zeros a Person, and returns a pointer
+      places = append(places, place)
+    }
+  }
+
+  return places
+}
+
 func main() {
   data, err := ioutil.ReadFile("people_places.json")
 
@@ -102,9 +148,12 @@ func main() {
 
   personsA, placesA := solutionA(data)
   personsB, placesB := solutionB(data)
+  personsC, placesC := solutionC(data)
 
-  fmt.Println(personsA, personsB)
+  fmt.Println(personsA, placesA)
   fmt.Println("\n")
-  fmt.Println(placesA, placesB)
+  fmt.Println(personsB, placesB)
+  fmt.Println("\n")
+  fmt.Println(personsC, placesC)
 }
 
