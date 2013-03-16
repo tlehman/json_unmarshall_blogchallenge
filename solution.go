@@ -1,9 +1,12 @@
 package main
 
 import (
+	"strconv"
+	"strings"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"github.com/dustin/go-jsonpointer"
 )
 
 type Person struct {
@@ -139,6 +142,46 @@ func addPlaceC(thing json.RawMessage, places []Place) []Place {
 	return places
 }
 
+// tlehman's solution using dustin's go-jsonpointer
+func solutionD(jsonStr []byte) ([]Person, []Place) {
+	persons := []Person{}
+	places := []Place{}
+
+	// loop i 0,1,2....∞ 
+	//     if /things/i/name nonemtpy
+	//         unmarshall as Person
+	//     else if /things/i/city nonempty
+	//         unmarshal as Place
+	//     else
+	//         break out of loop
+
+	for i := int64(0); true; i++ {
+		// build path to element of json array (e.g.   /things/2  )
+		pathRoot := string(strconv.AppendInt([]byte("/things/"), i, 10))
+		pathName := pathRoot + "/name"
+		pathAge := pathRoot + "/age"
+		pathCity := pathRoot + "/city"
+		pathCountry := pathRoot + "/country"
+
+		name, _ := jsonpointer.Find(jsonStr, pathName)
+		city, _ := jsonpointer.Find(jsonStr, pathCity)
+
+		if name != nil {
+			age, _ := jsonpointer.Find(jsonStr, pathAge)
+			agef, _ := strconv.ParseFloat(strings.TrimSpace(string(age)), 64)
+			persons = append(persons, Person{string(name), agef})
+
+		} else if city != nil {
+			country, _ := jsonpointer.Find(jsonStr, pathCountry)
+			places = append(places, Place{string(city), string(country)})
+
+		} else {
+			break
+		}
+	}
+	return persons, places
+}
+
 func main() {
 	data, err := ioutil.ReadFile("people_places.json")
 
@@ -149,10 +192,14 @@ func main() {
 	personsA, placesA := solutionA(data)
 	personsB, placesB := solutionB(data)
 	personsC, placesC := solutionC(data)
+	personsD, placesD := solutionD(data)
 
 	fmt.Println(personsA, placesA)
 	fmt.Println("\n")
 	fmt.Println(personsB, placesB)
 	fmt.Println("\n")
 	fmt.Println(personsC, placesC)
+	fmt.Println("\n")
+	fmt.Println(personsD, placesD)
+
 }
