@@ -147,14 +147,6 @@ func solutionD(jsonStr []byte) ([]Person, []Place) {
 	persons := []Person{}
 	places := []Place{}
 
-	// loop i 0,1,2....∞ 
-	//     if /things/i/name nonemtpy
-	//         unmarshall as Person
-	//     else if /things/i/city nonempty
-	//         unmarshal as Place
-	//     else
-	//         break out of loop
-
 	for i := int64(0); true; i++ {
 		// build path to element of json array (e.g.   /things/2  )
 		pathRoot := string(strconv.AppendInt([]byte("/things/"), i, 10))
@@ -180,6 +172,29 @@ func solutionD(jsonStr []byte) ([]Person, []Place) {
 		}
 	}
 	return persons, places
+}
+
+// jsonpointer returns json strings as raw byte arrays, 
+// such as [' ', '"', 'f', 'o', 'o', '"']
+func trimJsonBytes(toTrim []byte) []byte {
+	start, end := 0, len(toTrim)
+	leftEdge := true
+	rightEdge := false
+
+	for i:=0; i<end && !rightEdge; i++ {
+		if leftEdge && toTrim[i] == byte(' ') {
+			start++
+		}
+		if leftEdge && toTrim[i] == byte('"') {
+			start++
+			leftEdge = false
+		}
+		if !leftEdge && toTrim[i] == byte('"') {
+			end = i
+			rightEdge = true
+		}
+	}
+	return toTrim[start:end]
 }
 
 func main() {
