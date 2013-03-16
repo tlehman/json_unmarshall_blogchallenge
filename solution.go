@@ -161,11 +161,11 @@ func solutionD(jsonStr []byte) ([]Person, []Place) {
 		if name != nil {
 			age, _ := jsonpointer.Find(jsonStr, pathAge)
 			agef, _ := strconv.ParseFloat(strings.TrimSpace(string(age)), 64)
-			persons = append(persons, Person{string(name), agef})
+			persons = append(persons, Person{string(trimJsonBytes(name)), agef})
 
 		} else if city != nil {
 			country, _ := jsonpointer.Find(jsonStr, pathCountry)
-			places = append(places, Place{string(city), string(country)})
+			places = append(places, Place{string(trimJsonBytes(city)), string(trimJsonBytes(country))})
 
 		} else {
 			break
@@ -177,23 +177,22 @@ func solutionD(jsonStr []byte) ([]Person, []Place) {
 // jsonpointer returns json strings as raw byte arrays, 
 // such as [' ', '"', 'f', 'o', 'o', '"']
 func trimJsonBytes(toTrim []byte) []byte {
-	start, end := 0, len(toTrim)
+	start, end := 0, len(toTrim)-1
 	leftEdge := true
 	rightEdge := false
 
 	for i:=0; i<end && !rightEdge; i++ {
 		if leftEdge && toTrim[i] == byte(' ') {
 			start++
-		}
-		if leftEdge && toTrim[i] == byte('"') {
+		} else if leftEdge && toTrim[i] == byte('"') {
 			start++
 			leftEdge = false
-		}
-		if !leftEdge && toTrim[i] == byte('"') {
+		} else if !leftEdge && toTrim[i] == byte('"') {
 			end = i
 			rightEdge = true
 		}
 	}
+	fmt.Println(start, end)
 	return toTrim[start:end]
 }
 
